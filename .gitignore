@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+env/
+build/
+dist/
+
+# App outputs
+*.srt
+*.zip
+.yify_imdb_map.json
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
