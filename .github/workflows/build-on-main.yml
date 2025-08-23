@@ -1,0 +1,29 @@
+name: Build on main (artifact only)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller requests
+      - name: Build EXE (embed icon.png)
+        shell: pwsh
+        run: |
+          pyinstaller --noconfirm --onefile --windowed `
+            --name "YIFY-Subtitle-Downloader" `
+            --add-data "icon.png;." `
+            YIFY-Subtitle-Downloader.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YIFY-Subtitle-Downloader
+          path: dist/YIFY-Subtitle-Downloader.exe

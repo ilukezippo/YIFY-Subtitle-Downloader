@@ -1,5 +1,3 @@
-an easy way to Batch download English & Arabic Subtitles for your Movies
-
 \# YIFY Subtitle Downloader (GUI)
 
 
@@ -9,6 +7,8 @@ Tkinter app to fetch EN/AR subtitles from yifysubtitles.ch and yts-subs.com.
 \- Finds IMDb IDs from filenames (year-aware)
 
 \- Downloads .en/.ar beside your video
+
+\- Overwrite option works (no “(1)” files)
 
 \- Remembers matches per folder in .yify\_imdb\_map.json
 
