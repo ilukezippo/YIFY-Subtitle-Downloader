@@ -8,8 +8,6 @@ Tkinter app to fetch EN/AR subtitles from yifysubtitles.ch and yts-subs.com.
 
 \- Downloads .en/.ar beside your video
 
-\- Overwrite option works (no “(1)” files)
-
 \- Remembers matches per folder in .yify\_imdb\_map.json
 
 
