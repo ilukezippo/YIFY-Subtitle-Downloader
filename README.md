@@ -1,3 +1,5 @@
+an easy way to Batch download English & Arabic Subtitles for your Movies
+
 \# YIFY Subtitle Downloader (GUI)
 
 
