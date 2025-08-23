@@ -1,8 +1,9 @@
-﻿name: Release Windows EXE
+name: Release Windows EXE
 
 on:
   push:
-    tags: [ "v*" ]
+    tags:
+      - "v*"
 
 permissions:
   contents: write
@@ -10,22 +11,27 @@ permissions:
 jobs:
   build-and-release:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Verify inputs
         run: |
           if (!(Test-Path "YIFY-Subtitle-Downloader.py")) { Write-Error "YIFY-Subtitle-Downloader.py not found" }
           if (!(Test-Path "icon.png")) { Write-Error "icon.png not found in repo root" }
 
-      - name: Install deps
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller requests
 
+      # Build a windowed EXE and EMBED icon.png as a data file
       - name: Build EXE (embed icon.png)
         shell: pwsh
         run: |
