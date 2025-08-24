@@ -4,7 +4,12 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag to release (e.g. v1.1)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -12,6 +17,10 @@ permissions:
 jobs:
   build-and-release:
     runs-on: windows-latest
+    env:
+      # If this run came from a tag, use it; otherwise use the manual input
+      TAG_NAME: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_name }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,20 +46,27 @@ jobs:
             --hidden-import PIL.ImageDraw `
             YIFY-Subtitle-Downloader.py
 
+      - name: Ensure TAG_NAME is set
+        if: env.TAG_NAME == ''
+        shell: pwsh
+        run: |
+          Write-Error "This workflow needs a tag. Push a tag like v1.1 or provide 'tag_name' when running manually."
+          exit 1
 
       - name: Rename artifact with tag
         shell: pwsh
         run: |
           $exe = "dist\YIFY-Subtitle-Downloader.exe"
           if (!(Test-Path $exe)) { Write-Error "Build failed: $exe not found" }
-          $tag = "${{ github.ref_name }}"
-          Move-Item $exe ("dist\YIFY-Subtitle-Downloader-$tag.exe") -Force
+          Move-Item $exe ("dist\YIFY-Subtitle-Downloader-$env:TAG_NAME.exe") -Force
 
-      - name: Release
+      - name: Release (attach to the real tag)
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
           generate_release_notes: true
           files: |
-            dist/YIFY-Subtitle-Downloader-${{ github.ref_name }}.exe
+            dist/YIFY-Subtitle-Downloader-${{ env.TAG_NAME }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
