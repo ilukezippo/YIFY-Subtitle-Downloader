@@ -31,7 +31,11 @@ jobs:
           pyinstaller --noconfirm --onefile --windowed `
             --name "YIFY-Subtitle-Downloader" `
             --icon "icon.ico" `
+            --hidden-import PIL `
+            --hidden-import PIL.Image `
+            --hidden-import PIL.ImageDraw `
             YIFY-Subtitle-Downloader.py
+
 
       - name: Rename artifact with tag
         shell: pwsh
