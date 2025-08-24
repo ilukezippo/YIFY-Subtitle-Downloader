@@ -11,15 +11,9 @@ permissions:
 jobs:
   build-and-release:
     runs-on: windows-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Verify inputs
-        run: |
-          if (!(Test-Path "YIFY-Subtitle-Downloader.py")) { Write-Error "YIFY-Subtitle-Downloader.py not found" }
-          if (!(Test-Path "icon.png")) { Write-Error "icon.png not found in repo root" }
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,18 +23,17 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller requests
+          pip install pyinstaller pillow requests
 
-      # Build a windowed EXE and EMBED icon.png as a data file
-      - name: Build EXE (embed icon.png)
+      - name: Build EXE (embed icon)
         shell: pwsh
         run: |
           pyinstaller --noconfirm --onefile --windowed `
             --name "YIFY-Subtitle-Downloader" `
-            --add-data "icon.png;." `
+            --icon "icon.ico" `
             YIFY-Subtitle-Downloader.py
 
-      - name: Verify & rename with tag
+      - name: Rename artifact with tag
         shell: pwsh
         run: |
           $exe = "dist\YIFY-Subtitle-Downloader.exe"
@@ -48,11 +41,9 @@ jobs:
           $tag = "${{ github.ref_name }}"
           Move-Item $exe ("dist\YIFY-Subtitle-Downloader-$tag.exe") -Force
 
-      - name: Create GitHub Release and upload EXE
+      - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          draft: false
-          prerelease: false
           generate_release_notes: true
           files: |
             dist/YIFY-Subtitle-Downloader-${{ github.ref_name }}.exe
